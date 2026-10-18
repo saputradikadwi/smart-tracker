@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0f172a">
+  <title>Dika Smart Tracker — GitHub Edition</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2972/2972185.png">
+  <style>
+    :root { --bg: #0f172a; --card: #1e293b; --border: #334155; --accent: #38bdf8; --green: #10b981; --orange: #f59e0b; --danger: #ef4444; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: #f8fafc; max-width: 600px; margin: 0 auto; padding: 12px 12px 40px; }
+    .card { background: var(--card); border-radius: 14px; padding: 14px; margin-bottom: 14px; border: 1px solid var(--border); }
+    h2 { margin-top: 0; margin-bottom: 10px; font-size: 1.02rem; color: var(--accent); display: flex; justify-content: space-between; align-items: center; }
+    .status-pill { font-size: 0.68rem; background: #065f46; color: #6ee7b7; padding: 4px 9px; border-radius: 99px; font-weight: 600; }
+    .status-pill.warn { background: #78350f; color: #fde68a; }
+
+    .tab-bar { display: flex; gap: 4px; background: var(--bg); border-radius: 10px; padding: 4px; margin-bottom: 14px; border: 1px solid var(--border); position: sticky; top: 8px; z-index: 20; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+    .tab-btn { flex: 1; padding: 9px 6px; text-align: center; background: transparent; border: none; color: #94a3b8; font-weight: 600; font-size: 0.78rem; border-radius: 8px; cursor: pointer; margin: 0; }
+    .tab-btn.active { background: #2563eb; color: #fff; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+    .stat-box { background: var(--bg); padding: 10px 6px; border-radius: 10px; border: 1px solid var(--border); text-align: center; }
+    .stat-label { font-size: 0.7rem; color: #94a3b8; }
+    .stat-val { font-size: 1.04rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
+    .stat-val.burn { color: #f97316; }
+    .stat-val.green { color: var(--green); }
+
+    input, select, textarea, button { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 8px; border-radius: 8px; border: 1px solid #475569; background: var(--bg); color: #fff; box-sizing: border-box; font-size: 0.84rem; }
+    button { background: #2563eb; border: none; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+    button:active { opacity: 0.8; }
+    button.sync-btn { background: var(--green); font-size: 0.84rem; padding: 10px; }
+    .progress-bar { background: var(--border); border-radius: 99px; height: 9px; overflow: hidden; margin: 5px 0; }
+    .progress-fill { background: var(--green); height: 100%; width: 0%; transition: width 0.3s; }
+    .progress-fill.orange { background: var(--orange); }
+
+    .day-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+    .day-card.today { border: 2px solid var(--accent); }
+    .day-card.rest { background: #161e2e; border-color: #1e293b; opacity: 0.88; }
+    .day-card.passed { border: 1.5px solid var(--green); background: #064e3b29; }
+    .day-card.skipped { border: 1.5px solid var(--orange); background: #78350f29; }
+    .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 0.78rem; color: #94a3b8; }
+    .day-header strong { color: #f8fafc; font-size: 0.88rem; }
+    .mission-title { font-weight: 700; color: var(--accent); font-size: 0.9rem; margin-bottom: 3px; }
+    .mission-desc { font-size: 0.76rem; color: #cbd5e1; margin-bottom: 6px; line-height: 1.35; }
+    .daily-cal-strip { display: flex; justify-content: space-between; background: var(--card); padding: 7px 10px; border-radius: 8px; font-size: 0.74rem; margin-bottom: 8px; border: 1px solid var(--border); }
+    .status-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+
+    .btn-skip { background: var(--orange); color: #0f172a; width: auto; padding: 6px 10px; margin: 0; font-size: 0.73rem; }
+    .btn-bypass { background: #0284c7; color: #fff; width: auto; padding: 6px 10px; margin: 0; font-size: 0.73rem; }
+    .btn-undo { background: #475569; width: auto; padding: 5px 10px; margin: 0; font-size: 0.73rem; }
+    .edit-btn { width: auto; padding: 4px 8px; margin: 0; background: var(--orange); color: #0f172a; font-size: 0.72rem; border-radius: 5px; }
+    .del-btn { width: auto; padding: 4px 8px; margin: 0; background: var(--danger); font-size: 0.72rem; border-radius: 5px; }
+
+    ul { list-style: none; padding: 0; margin: 0; }
+    li { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; gap: 6px; }
+    .badge { background: var(--border); padding: 2px 6px; border-radius: 5px; font-size: 0.7rem; color: #cbd5e1; }
+    .note { font-size: 0.73rem; color: #94a3b8; margin-top: 4px; line-height: 1.4; }
+    .flex-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .flex-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .history-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 8px; font-size: 0.82rem; }
+
+    #installBanner { display: none; background: #1e3a8a; border: 1px solid #3b82f6; padding: 10px 12px; border-radius: 10px; margin-bottom: 12px; align-items: center; justify-content: space-between; font-size: 0.82rem; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; padding: 16px; }
+    .modal-overlay.show { display: flex; }
+    .modal-box { background: var(--card); border: 1px solid #475569; border-radius: 14px; padding: 16px; width: 100%; max-width: 420px; }
+    .modal-title { font-weight: 700; font-size: 1rem; color: var(--accent); margin-bottom: 8px; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <div id="installBanner">
+    <span>📲 <strong>Pasang Aplikasi Dika 100KM</strong> di layar utama HP Anda!</span>
+    <button onclick="installPWA()" style="width:auto; padding:6px 12px; margin:0; background:#10b981;">Install App</button>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('tab-misi', this)">🎯 1. Misi & Harian</button>
+    <button class="tab-btn" onclick="switchTab('tab-history', this)">📊 2. History & Edit</button>
+    <button class="tab-btn" onclick="switchTab('tab-github', this)">🐙 3. GitHub DB & Plan</button>
+  </div>
+
+  <!-- TAB 1: MISI & HARIAN -->
+  <div id="tab-misi" class="tab-content active">
+    <div class="card">
+      <h2>
+        <span>🚴‍♂️ Road to 100 KM — Dika</span>
+        <span id="gitStatusBadge" class="status-pill warn">💾 Local Cache</span>
+      </h2>
+
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-label">Makan/Minum Hari Ini</div>
+          <div class="stat-val" id="todayIntake">0 kkal</div>
+          <div class="note" id="todayProt">Protein: 0/145g</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Olahraga Hari Ini</div>
+          <div class="stat-val burn" id="todayBurn">0 kkal</div>
+          <div class="note" id="todayWorkoutSummary">0 mnt (0%)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Total Misi Passed</div>
+          <div class="stat-val green" id="missionCount">0 / 40</div>
+          <div class="note" id="sisaCal">Sisa: 2100 kkal</div>
+        </div>
+      </div>
+
+      <div class="stat-label">Progres Kinerja Misi Hari Ini (<span id="todayPctText">0%</span>):</div>
+      <div class="progress-bar"><div class="progress-fill" id="todayBar"></div></div>
+
+      <div class="flex-inputs" style="margin-top:8px;">
+        <button class="sync-btn" id="syncBtn" onclick="syncFromIntervals()" style="margin:0;">
+          ⌚ Sync Huawei Watch
+        </button>
+        <button onclick="pullFromGitHub(true)" style="background:#24292f; border:1px solid #475569; margin:0;">
+          🐙 Pull dari GitHub DB
+        </button>
+      </div>
+      <div id="syncStatus" class="note" style="text-align:center; margin-top:6px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>🗓️ Jadwal Misi & Persentase Harian</h2>
+      <div class="flex-inputs">
+        <div>
+          <label class="stat-label">Pilih Minggu Program:</label>
+          <select id="weekSelect" onchange="changeWeek()"></select>
+        </div>
+        <div>
+          <label class="stat-label">Mulai Hari Senin:</label>
+          <input type="date" id="startMondayInput" onchange="updateStartMonday()">
+        </div>
+      </div>
+      <div class="note" style="margin-bottom:10px;">
+        📌 <strong>Senin–Kamis:</strong> Maks 10 KM / 40 menit (+ 1x Gym Kantor). <strong>Jumat & Minggu:</strong> LIBUR TETAP. Olahraga pagi + sore otomatis dijumlahkan ke persentase (%) harian!
+      </div>
+
+      <div id="weekScheduleList"></div>
+    </div>
+
+    <div class="card">
+      <h2>🍲🥤 Catat / Edit Makan & Minum</h2>
+      <label class="stat-label">Pilih Tanggal Pencatatan:</label>
+      <input type="date" id="logDateInput" onchange="saveAndRender(false)">
+      <input type="text" id="foodQuery" placeholder="Ketik misal: Soto ayam + nasi + es teh" onkeydown="if(event.key==='Enter') analyzeFood()">
+      <button id="foodBtn" onclick="analyzeFood()">✨ Hitung & Commit Otomatis</button>
+      <div id="engineStatus" class="note"></div>
+      <ul id="foodList"></ul>
+    </div>
+  </div>
+
+  <!-- TAB 2: PROGRESS HISTORY & EDIT -->
+  <div id="tab-history" class="tab-content">
+    <div class="card">
+      <h2>📊 Riwayat Persentase Kinerja & Kalori</h2>
+      <div class="note" style="margin-bottom:6px;">Progres Keseluruhan Program:</div>
+      <div class="progress-bar"><div class="progress-fill" id="missionBar"></div></div>
+      <div id="historyList" style="margin-top:12px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>⌚✏️ Tambah / Edit Sesi Olahraga (Pagi + Sore)</h2>
+      <div class="note" style="margin-bottom:8px;">
+        Gunakan form ini jika ingin mencatat cicilan olahraga manual atau mengoreksi durasi/kalori:
+      </div>
+      <div class="flex-inputs">
+        <input type="date" id="manualWorkDate">
+        <select id="manualWorkType">
+          <option value="Ride">🚴 Sepeda (Strattos S7)</option>
+          <option value="Run">🏃 Lari (Running)</option>
+          <option value="WeightTraining">🏋️‍♂️ Strength (Gym Kantor)</option>
+        </select>
+      </div>
+      <div class="flex-3">
+        <input type="number" step="0.1" id="manualWorkKm" placeholder="Jarak (KM)">
+        <input type="number" id="manualWorkMin" placeholder="Durasi (Mnt)">
+        <input type="number" id="manualWorkCal" placeholder="Kalori (kkal)">
+      </div>
+      <button onclick="addManualWorkout()" style="background:#ea580c;">+ Simpan Sesi Olahraga</button>
+      <ul id="workoutList"></ul>
+    </div>
+  </div>
+
+  <!-- TAB 3: GITHUB DATABASE & WORKOUT PLAN -->
+  <div id="tab-github" class="tab-content">
+    <div class="card">
+      <h2>🐙 Konfigurasi Git-as-a-Database (GitHub REST API)</h2>
+      <div class="note" style="margin-bottom:10px;">
+        Data aplikasi disimpan langsung ke file <code>db.json</code> di dalam repository GitHub Anda. Kredensial di bawah ini disimpan aman di perangkat Anda:
+      </div>
+
+      <div class="flex-inputs">
+        <div>
+          <label class="stat-label">GitHub Username:</label>
+          <input type="text" id="ghOwnerInput" placeholder="Contoh: dikasaputra">
+        </div>
+        <div>
+          <label class="stat-label">Nama Repository:</label>
+          <input type="text" id="ghRepoInput" placeholder="Contoh: smart-tracker">
+        </div>
+      </div>
+
+      <label class="stat-label">GitHub Personal Access Token (<code>ghp_...</code>):</label>
+      <input type="password" id="ghTokenInput" placeholder="ghp_...">
+
+      <details style="margin: 8px 0;">
+        <summary style="cursor:pointer; font-size:0.78rem; color:#38bdf8; font-weight:600;">🔑 Pengaturan Kunci Gemini & Intervals.icu</summary>
+        <div style="margin-top:8px;">
+          <label class="stat-label">Gemini API Key:</label>
+          <input type="password" id="geminiKeyInput">
+          <label class="stat-label">Intervals.icu API Key:</label>
+          <input type="password" id="intervalsKeyInput">
+        </div>
+      </details>
+
+      <button onclick="saveVaultConfig()" style="background:#10b981;">💾 Simpan Konfigurasi & Hubungkan ke GitHub</button>
+
+      <div class="flex-inputs" style="margin-top:6px;">
+        <button onclick="pushToGitHub(true)" style="background:#2563eb; margin:0;">⬆️ Commit & Push ke GitHub</button>
+        <button onclick="pullFromGitHub(true)" style="background:#0284c7; margin:0;">⬇️ Pull db.json dari GitHub</button>
+      </div>
+      <div id="gitLog" class="note" style="margin-top:6px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>➕ Tambah Jadwal / Workout Plan Baru</h2>
+      <div class="note" style="margin-bottom:8px;">
+        Anda bisa menambah jadwal baru lewat form ini, atau mengedit langsung file <code>db.json</code> lewat <strong>Visual Studio Code</strong>:
+      </div>
+      <div class="flex-inputs">
+        <input type="text" id="newPlanCode" placeholder="Kode (Misal: W9-M1)">
+        <select id="newPlanCat">
+          <option value="RIDE">🚴 Bersepeda Harian</option>
+          <option value="RUN">🏃 Lari (Running)</option>
+          <option value="STRENGTH">🏋️‍♂️ Strength / Gym Kantor</option>
+          <option value="RIDE_LONG">🏆 Long Ride Sabtu</option>
+        </select>
+      </div>
+      <input type="text" id="newPlanTitle" placeholder="Judul Latihan (Misal: Recovery Ride 20 KM / Tour 120 KM)">
+      <input type="text" id="newPlanDesc" placeholder="Deskripsi / Catatan Target HR Zone">
+      <div class="flex-inputs">
+        <input type="number" step="0.5" id="newPlanKm" placeholder="Target Min KM (Misal: 10)">
+        <input type="number" id="newPlanMin" placeholder="Target Min Menit (Misal: 30)">
+      </div>
+      <button onclick="addCustomMissionPlan()" style="background:#10b981;">➕ Tambah & Commit ke db.json</button>
+      <div class="note">Total Misi di <code>db.json</code> Saat Ini: <strong id="totalPlanCount">40</strong> Misi</div>
+    </div>
+
+    <div class="card">
+      <h2>📥 Export Tabel CSV (Excel)</h2>
+      <button onclick="downloadCSV()" style="background:#ea580c; margin:0;">📥 Download Rekap_Olahraga_Kalori_Dika.csv</button>
+    </div>
+  </div>
+
+  <!-- MODAL 1: KONFIRMASI MANUAL BYPASS -->
+  <div id="bypassModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title">❓ Konfirmasi Bypass Olahraga</div>
+      <div id="bypassModalText" style="font-size:0.86rem; color:#cbd5e1; line-height:1.4;">
+        Apakah Anda yakin sudah olahraga hari ini?
+      </div>
+      <div class="modal-actions">
+        <button onclick="confirmBypassYes()" style="background:#10b981;">✅ Ya, Saya Yakin Sudah Olahraga</button>
+        <button onclick="closeModals()" style="background:#475569;">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: EDIT MAKANAN / MINUMAN -->
+  <div id="editFoodModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title">✏️ Edit Data Makanan / Minuman</div>
+      <label class="stat-label">Nama Makanan/Minuman:</label>
+      <input type="text" id="editFoodName">
+      <div class="flex-inputs">
+        <div>
+          <label class="stat-label">Kalori (kkal):</label>
+          <input type="number" id="editFoodCal">
+        </div>
+        <div>
+          <label class="stat-label">Protein (gram):</label>
+          <input type="number" id="editFoodProt">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button onclick="saveFoodEdit()" style="background:#10b981;">💾 Simpan Perubahan</button>
+        <button onclick="closeModals()" style="background:#475569;">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: EDIT DATA OLAHRAGA -->
+  <div id="editWorkoutModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-title">✏️ Edit Sesi Olahraga</div>
+      <label class="stat-label">Nama / Jenis Latihan:</label>
+      <input type="text" id="editWorkLabel">
+      <div class="flex-3">
+        <div>
+          <label class="stat-label">Jarak (KM):</label>
+          <input type="number" step="0.1" id="editWorkKm">
+        </div>
+        <div>
+          <label class="stat-label">Durasi (Mnt):</label>
+          <input type="number" id="editWorkMin">
+        </div>
+        <div>
+          <label class="stat-label">Kalori (kkal):</label>
+          <input type="number" id="editWorkCal">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button onclick="saveWorkoutEdit()" style="background:#10b981;">💾 Simpan Perubahan</button>
+        <button onclick="closeModals()" style="background:#475569;">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let deferredPrompt = null;
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBanner').style.display = 'flex';
+    });
+    async function installPWA() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        document.getElementById('installBanner').style.display = 'none';
+      }
+      deferredPrompt = null;
+    }
+
+    const vault = JSON.parse(localStorage.getItem('dikaVaultKeysV1')) || {
+      ghOwner: '',
+      ghRepo: '',
+      ghToken: '',
+      geminiKey: 'AQ.Ab8RN6JtP2vyBUKJZcp2wDr6JGpAdI_yeBFtOxM9NeloYa5hRw',
+      intervalsKey: '3z56bj988n28mm9yewyrcab1c'
+    };
+
+    function generateDefaultMissions() {
+      const weekKm = [30, 40, 50, 35, 65, 75, 85, 100];
+      const list = [];
+      weekKm.forEach((satKm, idx) => {
+        const w = idx + 1;
+        list.push(
+          { code: `W${w}-M1`, category: 'RIDE', title: `🚴 Gowes Zone 2 Spin (Mgg ${w})`, desc: `Kayuh santai Strattos S7 (Target: 10 KM atau 30 menit). Maks 40 mnt.`, minKm: 10, minMin: 30 },
+          { code: `W${w}-M2`, category: 'RUN', title: `🏃 Easy Run Pagi (Mgg ${w})`, desc: `Lari pagi sepatu running (Target: 3.5 KM atau 30 menit). Maks 40 mnt.`, minKm: 3.5, minMin: 30 },
+          { code: `W${w}-M3`, category: 'STRENGTH', title: `🏋️‍♂️ Strength Training Gym Kantor (Mgg ${w})`, desc: `Latihan beban di Gym Kantor: Squat/Leg Press, Row & Plank (Target: 30 menit).`, minKm: 0, minMin: 30 },
+          { code: `W${w}-M4`, category: 'RIDE', title: `⛰️ Hill Climb / Tempo Pendek (Mgg ${w})`, desc: `Gowes tanjakan pagi (Target: 8 KM atau 30 menit). Kamis malam meeting -> Jumat Libur!`, minKm: 8, minMin: 30 },
+          { code: `W${w}-M5`, category: 'RIDE_LONG', title: `🏆 Long Ride Sabtu: ${satKm} KM (Mgg ${w})`, desc: `Jadwal bebas Sabtu! Target ${satKm} KM (80% HR Zone 2). Minggu pagi jualan -> Libur!`, minKm: Math.round(satKm * 0.85), minMin: 60 }
+        );
+      });
+      return list;
+    }
+
+    function getLocalToday() {
+      const d = new Date();
+      d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      return d.toISOString().slice(0, 10);
+    }
+
+    function getMondayOfCurrentWeek() {
+      const d = new Date();
+      const day = d.getDay();
+      const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+      const mon = new Date(d.setDate(diff));
+      mon.setMinutes(mon.getMinutes() - mon.getTimezoneOffset());
+      return mon.toISOString().slice(0, 10);
+    }
+
+    const prevData = JSON.parse(localStorage.getItem('dikaTrackerCloudV11') || 'null');
+    const state = JSON.parse(localStorage.getItem('dikaGitDbStateV12')) || {
+      lastUpdated: new Date().toISOString(),
+      startMonday: (prevData && prevData.startMonday) || getMondayOfCurrentWeek(),
+      selectedWeek: 0,
+      masterMissions: (prevData && prevData.masterMissions) || generateDefaultMissions(),
+      skippedDates: (prevData && prevData.skippedDates) || {},
+      manualBypasses: (prevData && prevData.manualBypasses) || {},
+      foods: (prevData && prevData.foods) || [],
+      workouts: (prevData && prevData.workouts) || []
+    };
+
+    if (!state.masterMissions || state.masterMissions.length < 5) {
+      state.masterMissions = generateDefaultMissions();
+    }
+
+    let pendingBypass = null;
+    let editingFoodId = null;
+    let editingWorkoutId = null;
+
+    document.getElementById('startMondayInput').value = state.startMonday;
+    document.getElementById('logDateInput').value = getLocalToday();
+    document.getElementById('manualWorkDate').value = getLocalToday();
+    document.getElementById('ghOwnerInput').value = vault.ghOwner || '';
+    document.getElementById('ghRepoInput').value = vault.ghRepo || '';
+    document.getElementById('ghTokenInput').value = vault.ghToken || '';
+    document.getElementById('geminiKeyInput').value = vault.geminiKey || '';
+    document.getElementById('intervalsKeyInput').value = vault.intervalsKey || '';
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function addDays(dateStr, days) {
+      const d = new Date(dateStr + 'T00:00:00');
+      d.setDate(d.getDate() + days);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function utf8ToBase64(str) {
+      const bytes = new TextEncoder().encode(str);
+      let binary = '';
+      bytes.forEach(b => binary += String.fromCharCode(b));
+      return btoa(binary);
+    }
+
+    function base64ToUtf8(b64) {
+      const binary = atob(b64.replace(/\s/g, ''));
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }
+
+    function saveVaultConfig() {
+      vault.ghOwner = document.getElementById('ghOwnerInput').value.trim();
+      vault.ghRepo = document.getElementById('ghRepoInput').value.trim();
+      vault.ghToken = document.getElementById('ghTokenInput').value.trim();
+      vault.geminiKey = document.getElementById('geminiKeyInput').value.trim();
+      vault.intervalsKey = document.getElementById('intervalsKeyInput').value.trim();
+      localStorage.setItem('dikaVaultKeysV1', JSON.stringify(vault));
+
+      if (vault.ghOwner && vault.ghRepo && vault.ghToken) {
+        pushToGitHub(true);
+      } else {
+        alert('✅ Kunci lokal disimpan! Isi Username, Nama Repo, dan Token GitHub untuk mengaktifkan auto-commit ke db.json.');
+      }
+    }
+
+    async function pullFromGitHub(showNotif = false) {
+      const badge = document.getElementById('gitStatusBadge');
+      const logEl = document.getElementById('gitLog');
+
+      if (!vault.ghOwner || !vault.ghRepo) {
+        try {
+          const resLocal = await fetch(`./db.json?t=${Date.now()}`);
+          if (resLocal.ok) {
+            const dataLocal = await resLocal.json();
+            if (dataLocal && dataLocal.masterMissions && dataLocal.masterMissions.length >= 40) {
+              Object.assign(state, dataLocal);
+              saveAndRender(false);
+            }
+          }
+        } catch (e) {}
+        if (showNotif) alert('Isi GitHub Username, Nama Repo, dan Token terlebih dahulu di Tab 3!');
+        return;
+      }
+
+      badge.innerText = '⏳ Pulling GitHub...';
+      try {
+        const headers = { 'Accept': 'application/vnd.github+json' };
+        if (vault.ghToken) headers['Authorization'] = `Bearer ${vault.ghToken}`;
+
+        const url = `https://api.github.com/repos/${vault.ghOwner}/${vault.ghRepo}/contents/db.json?t=${Date.now()}`;
+        const res = await fetch(url, { headers });
+
+        if (res.status === 404) {
+          await pushToGitHub(showNotif);
+          return;
+        }
+        if (!res.ok) throw new Error(`GitHub API HTTP ${res.status}`);
+
+        const fileMeta = await res.json();
+        const decodedJson = base64ToUtf8(fileMeta.content);
+        const remoteState = JSON.parse(decodedJson);
+
+        if (remoteState.masterMissions && remoteState.masterMissions.length < 40) {
+          remoteState.masterMissions = generateDefaultMissions();
+        }
+
+        Object.assign(state, remoteState);
+        document.getElementById('startMondayInput').value = state.startMonday;
+        saveAndRender(false);
+
+        badge.innerText = '🐙 GitHub Synced';
+        badge.className = 'status-pill';
+        if (logEl) logEl.innerText = `✅ Pull db.json berhasil (SHA: ${fileMeta.sha.slice(0, 7)}) pada ${new Date().toLocaleTimeString('id-ID')}`;
+        if (showNotif) alert('✅ Data terbaru dari db.json di GitHub berhasil dimuat!');
+      } catch (err) {
+        badge.innerText = '⚠️ Offline / Local';
+        badge.className = 'status-pill warn';
+        if (logEl) logEl.innerText = `⚠️ Gagal Pull dari GitHub: ${err.message}`;
+        if (showNotif) alert(`⚠️ Gagal menarik db.json dari GitHub: ${err.message}`);
+      }
+    }
+
+    async function pushToGitHub(showNotif = false) {
+      if (!vault.ghOwner || !vault.ghRepo || !vault.ghToken) return;
+      const badge = document.getElementById('gitStatusBadge');
+      const logEl = document.getElementById('gitLog');
+      badge.innerText = '⏳ Committing...';
+
+      try {
+        const apiUrl = `https://api.github.com/repos/${vault.ghOwner}/${vault.ghRepo}/contents/db.json`;
+        const headers = {
+          'Accept': 'application/vnd.github+json',
+          'Authorization': `Bearer ${vault.ghToken}`,
+          'Content-Type': 'application/json'
+        };
+
+        let currentSha = null;
+        const getRes = await fetch(`${apiUrl}?t=${Date.now()}`, { headers });
+        if (getRes.ok) {
+          const getMeta = await getRes.json();
+          currentSha = getMeta.sha;
+        }
+
+        state.lastUpdated = new Date().toISOString();
+        const cleanPayload = {
+          lastUpdated: state.lastUpdated,
+          startMonday: state.startMonday,
+          selectedWeek: state.selectedWeek,
+          masterMissions: state.masterMissions,
+          skippedDates: state.skippedDates,
+          manualBypasses: state.manualBypasses,
+          foods: state.foods,
+          workouts: state.workouts
+        };
+
+        const prettyJson = JSON.stringify(cleanPayload, null, 2);
+        const bodyObj = {
+          message: `🔄 Auto-sync db.json (${getLocalToday()} ${new Date().toLocaleTimeString('id-ID')})`,
+          content: utf8ToBase64(prettyJson)
+        };
+        if (currentSha) bodyObj.sha = currentSha;
+
+        const putRes = await fetch(apiUrl, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(bodyObj)
+        });
+
+        if (!putRes.ok) {
+          const errJson = await putRes.json();
+          throw new Error(errJson.message || `HTTP ${putRes.status}`);
+        }
+
+        badge.innerText = '🐙 GitHub Synced';
+        badge.className = 'status-pill';
+        if (logEl) logEl.innerText = `✅ Auto-commit ke db.json berhasil pada ${new Date().toLocaleTimeString('id-ID')}`;
+        if (showNotif) alert('✅ Berhasil melakukan Git Commit & Push ke db.json di GitHub Anda!');
+      } catch (err) {
+        badge.innerText = '⚠️ Commit Tertunda';
+        badge.className = 'status-pill warn';
+        if (logEl) logEl.innerText = `⚠️ Gagal commit ke GitHub: ${err.message}`;
+        if (showNotif) alert(`⚠️ Gagal commit ke GitHub: ${err.message}`);
+      }
+    }
+
+    function addCustomMissionPlan() {
+      const code = document.getElementById('newPlanCode').value.trim() || `PLAN-${state.masterMissions.length + 1}`;
+      const category = document.getElementById('newPlanCat').value;
+      const title = document.getElementById('newPlanTitle').value.trim();
+      const desc = document.getElementById('newPlanDesc').value.trim() || 'Target latihan lanjutan.';
+      const minKm = parseFloat(document.getElementById('newPlanKm').value) || 0;
+      const minMin = parseInt(document.getElementById('newPlanMin').value) || 30;
+
+      if (!title) return alert('Isi Judul Latihan terlebih dahulu!');
+
+      state.masterMissions.push({ code, category, title, desc, minKm, minMin });
+      document.getElementById('newPlanCode').value = '';
+      document.getElementById('newPlanTitle').value = '';
+      document.getElementById('newPlanDesc').value = '';
+      document.getElementById('newPlanKm').value = '';
+      document.getElementById('newPlanMin').value = '';
+
+      saveAndRender(true);
+      alert(`✅ Misi "${title}" berhasil ditambahkan ke db.json!`);
+    }
+
+    function downloadCSV() {
+      let csv = 'Tipe_Data,Tanggal,Nama_Item_Atau_Olahraga,Kalori_kkal,Protein_Atau_DurasiMenit,Jarak_KM\n';
+      state.foods.forEach(f => {
+        csv += `Makanan/Minuman,${f.date},"${(f.name || '').replace(/"/g, '""')}",${f.cal},${f.prot}g Protein,0\n`;
+      });
+      state.workouts.forEach(w => {
+        csv += `Olahraga,${w.date},"${(w.typeLabel || '').replace(/"/g, '""')}",${w.cal},${w.durationMin || 0} Menit,${w.km || 0}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Rekap_Dika_${getLocalToday()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function evaluateMission(mission, dayWorkouts, dateStr) {
+      if (state.manualBypasses[dateStr]) {
+        return { passed: true, percent: 100, reason: '✅ MISSION PASSED (Manual Bypass — 100%)' };
+      }
+      if (!dayWorkouts || dayWorkouts.length === 0) {
+        return { passed: false, percent: 0, reason: '⏳ Progress: 0% (Menunggu data Huawei Watch / Input)' };
+      }
+
+      let totalRideKm = 0, totalAnyMin = 0, totalAnyKm = 0;
+      dayWorkouts.forEach(w => {
+        const t = (w.rawType || '').toLowerCase();
+        const km = Number(w.km) || 0;
+        const min = Number(w.durationMin) || 0;
+        totalAnyMin += min;
+        totalAnyKm += km;
+        if (t.includes('ride') || t.includes('cycle') || t.includes('biking')) totalRideKm += km;
+      });
+
+      let pctKm = mission.minKm > 0 ? Math.round((totalAnyKm / mission.minKm) * 100) : 0;
+      let pctMin = mission.minMin > 0 ? Math.round((totalAnyMin / mission.minMin) * 100) : 0;
+      let percent = Math.min(100, Math.max(pctKm, pctMin));
+
+      if (mission.category === 'RIDE_LONG' && mission.minKm > 0) {
+        percent = Math.min(100, Math.round((totalRideKm / mission.minKm) * 100));
+      }
+
+      const passed = percent >= 100;
+      const summary = `${totalAnyMin} mnt / ${totalAnyKm.toFixed(1)} KM`;
+      return {
+        passed,
+        percent,
+        reason: passed
+          ? `✅ MISSION PASSED! (${summary} — 100%)`
+          : `⏳ Progress: ${percent}% (${summary} dari target ${mission.minMin} mnt / ${mission.minKm} KM)`
+      };
+    }
+
+    function buildScheduleMap() {
+      const map = {};
+      let missionIdx = 0;
+      let totalPassedCount = 0;
+      const totalMissions = state.masterMissions.length;
+      const maxDaysToSimulate = Math.max(120, Math.ceil(totalMissions / 5) * 7 + 30);
+
+      for (let i = 0; i < maxDaysToSimulate; i++) {
+        const dStr = addDays(state.startMonday, i);
+        const dayOfWeek = new Date(dStr + 'T00:00:00').getDay();
+
+        if (dayOfWeek === 5) {
+          map[dStr] = { type: 'REST', title: '🛌 LIBUR TETAP (Recovery Kamis Meeting Malam)', desc: 'Istirahat penuh usai Kamis pulang malam.', percent: 0 };
+        } else if (dayOfWeek === 0) {
+          map[dStr] = { type: 'REST', title: '📦 LIBUR TETAP (Jadwal Jualan Minggu Pagi)', desc: 'Minggu pagi fokus jualan.', percent: 0 };
+        } else {
+          if (state.skippedDates[dStr]) {
+            const shifted = state.masterMissions[missionIdx] || { title: 'Misi', desc: '' };
+            map[dStr] = { type: 'SKIPPED', title: `⏭️ Di-Skip: ${shifted.title}`, desc: 'Digeser otomatis ke hari aktif berikutnya.', percent: 0 };
+          } else {
+            const m = state.masterMissions[missionIdx];
+            if (m) {
+              const dayWorkouts = state.workouts.filter(w => w.date === dStr);
+              const evalRes = evaluateMission(m, dayWorkouts, dStr);
+              if (evalRes.passed) totalPassedCount++;
+
+              map[dStr] = {
+                type: evalRes.passed ? 'PASSED' : 'ACTIVE',
+                mission: m,
+                title: m.title,
+                desc: m.desc,
+                percent: evalRes.percent,
+                evalReason: evalRes.reason
+              };
+              missionIdx++;
+            } else {
+              map[dStr] = { type: 'DONE_ALL', title: '🏁 Seluruh Misi di Antrean Selesai! (Tambah di Tab 3 / VS Code)', desc: '', percent: 100 };
+            }
+          }
+        }
+      }
+      return { map, totalPassedCount };
+    }
+
+    function toggleSkipDay(dateStr) {
+      if (state.skippedDates[dateStr]) delete state.skippedDates[dateStr];
+      else state.skippedDates[dateStr] = true;
+      saveAndRender(true);
+    }
+
+    function openBypassModal(dateStr, missionTitle) {
+      pendingBypass = { dateStr, missionTitle };
+      document.getElementById('bypassModalText').innerHTML = `Apakah Anda yakin sudah olahraga untuk menyelesaikan misi:<br><strong style="color:#38bdf8">${missionTitle}</strong> pada tanggal <strong>${dateStr}</strong>?`;
+      document.getElementById('bypassModal').classList.add('show');
+    }
+
+    function confirmBypassYes() {
+      if (!pendingBypass) return;
+      const { dateStr, missionTitle } = pendingBypass;
+      state.manualBypasses[dateStr] = true;
+      const hasW = state.workouts.some(w => w.date === dateStr);
+      if (!hasW) {
+        state.workouts.push({
+          id: 'bp_' + Date.now(),
+          date: dateStr,
+          rawType: 'Workout',
+          typeLabel: `✅ ${missionTitle} (Bypass)`,
+          km: 10,
+          durationMin: 30,
+          hr: '-',
+          cal: 300
+        });
+      }
+      closeModals();
+      saveAndRender(true);
+    }
+
+    function removeManualBypass(dateStr) {
+      delete state.manualBypasses[dateStr];
+      state.workouts = state.workouts.filter(w => !(w.date === dateStr && String(w.id).startsWith('bp_')));
+      saveAndRender(true);
+    }
+
+    function closeModals() {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+      pendingBypass = null;
+      editingFoodId = null;
+      editingWorkoutId = null;
+    }
+
+    function openEditFood(id) {
+      const f = state.foods.find(item => String(item.id) === String(id));
+      if (!f) return;
+      editingFoodId = f.id;
+      document.getElementById('editFoodName').value = f.name;
+      document.getElementById('editFoodCal').value = f.cal;
+      document.getElementById('editFoodProt').value = f.prot;
+      document.getElementById('editFoodModal').classList.add('show');
+    }
+
+    function saveFoodEdit() {
+      const f = state.foods.find(item => String(item.id) === String(editingFoodId));
+      if (f) {
+        f.name = document.getElementById('editFoodName').value.trim() || f.name;
+        f.cal = parseInt(document.getElementById('editFoodCal').value) || 0;
+        f.prot = parseInt(document.getElementById('editFoodProt').value) || 0;
+      }
+      closeModals();
+      saveAndRender(true);
+    }
+
+    function deleteFood(id) {
+      state.foods = state.foods.filter(f => String(f.id) !== String(id));
+      saveAndRender(true);
+    }
+
+    function addManualWorkout() {
+      const dateStr = document.getElementById('manualWorkDate').value || getLocalToday();
+      const rawType = document.getElementById('manualWorkType').value;
+      const km = parseFloat(document.getElementById('manualWorkKm').value) || 0;
+      const min = parseInt(document.getElementById('manualWorkMin').value) || 0;
+      const cal = parseInt(document.getElementById('manualWorkCal').value) || Math.round(min * 8);
+
+      if (!min && !km) return alert('Isi minimal Durasi (Menit) atau Jarak (KM)!');
+      let icon = rawType === 'Ride' ? '🚴 Sepeda' : (rawType === 'Run' ? '🏃 Lari' : '🏋️‍♂️ Gym');
+      state.workouts.push({
+        id: 'man_' + Date.now(),
+        date: dateStr,
+        rawType: rawType,
+        typeLabel: `${icon} (${km > 0 ? km + ' KM • ' : ''}${min} mnt)`,
+        km: km,
+        durationMin: min,
+        hr: '-',
+        cal: cal
+      });
+
+      document.getElementById('manualWorkKm').value = '';
+      document.getElementById('manualWorkMin').value = '';
+      document.getElementById('manualWorkCal').value = '';
+      saveAndRender(true);
+    }
+
+    function openEditWorkout(id) {
+      const w = state.workouts.find(item => String(item.id) === String(id));
+      if (!w) return;
+      editingWorkoutId = w.id;
+      document.getElementById('editWorkLabel').value = w.typeLabel;
+      document.getElementById('editWorkKm').value = w.km || 0;
+      document.getElementById('editWorkMin').value = w.durationMin || 0;
+      document.getElementById('editWorkCal').value = w.cal || 0;
+      document.getElementById('editWorkoutModal').classList.add('show');
+    }
+
+    function saveWorkoutEdit() {
+      const w = state.workouts.find(item => String(item.id) === String(editingWorkoutId));
+      if (w) {
+        w.typeLabel = document.getElementById('editWorkLabel').value.trim() || w.typeLabel;
+        w.km = parseFloat(document.getElementById('editWorkKm').value) || 0;
+        w.durationMin = parseInt(document.getElementById('editWorkMin').value) || 0;
+        w.cal = parseInt(document.getElementById('editWorkCal').value) || 0;
+      }
+      closeModals();
+      saveAndRender(true);
+    }
+
+    function deleteWorkout(id) {
+      state.workouts = state.workouts.filter(w => String(w.id) !== String(id));
+      saveAndRender(true);
+    }
+
+    function changeWeek() { state.selectedWeek = parseInt(document.getElementById('weekSelect').value); saveAndRender(false); }
+    function updateStartMonday() { const val = document.getElementById('startMondayInput').value; if (val) { state.startMonday = val; saveAndRender(true); } }
+
+    async function syncFromIntervals() {
+      const btn = document.getElementById('syncBtn');
+      const statusEl = document.getElementById('syncStatus');
+      btn.innerText = '⏳ Sync Jam...';
+      btn.disabled = true;
+
+      try {
+        const newest = addDays(getLocalToday(), 2);
+        const oldest = addDays(state.startMonday, -7);
+        const res = await fetch(`https://intervals.icu/api/v1/athlete/0/activities?oldest=${oldest}&newest=${newest}`, {
+          headers: { 'Authorization': 'Basic ' + btoa('API_KEY:' + vault.intervalsKey) }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const acts = await res.json();
+
+        const synced = acts.map(act => {
+          const km = act.distance ? +(act.distance / 1000).toFixed(1) : 0;
+          const sec = act.moving_time || act.elapsed_time || 0;
+          const durationMin = Math.round(sec / 60);
+          const rawType = act.type || 'Workout';
+          const cal = act.calories ? Math.round(act.calories) : Math.round(durationMin * 7.5);
+          let icon = rawType.toLowerCase().includes('ride') ? '🚴' : (rawType.toLowerCase().includes('run') ? '🏃' : '🏋️‍♂️');
+
+          return {
+            id: 'icu_' + act.id,
+            date: (act.start_date_local || '').slice(0, 10),
+            rawType: rawType,
+            typeLabel: `${icon} ${act.name || rawType} (${km > 0 ? km + ' KM • ' : ''}${durationMin} mnt)`,
+            km: km,
+            durationMin: durationMin,
+            hr: act.average_heartrate ? Math.round(act.average_heartrate) : '-',
+            cal: cal
+          };
+        });
+
+        const localOnly = state.workouts.filter(w => !String(w.id).startsWith('icu_'));
+        state.workouts = [...localOnly, ...synced];
+        statusEl.innerText = `✅ Sinkronisasi Huawei Watch berhasil (${synced.length} sesi).`;
+        saveAndRender(true);
+      } catch (e) {
+        statusEl.innerText = '⚠️ Gagal terhubung ke Intervals.icu.';
+      } finally {
+        btn.innerText = '⌚ Sync Huawei Watch';
+        btn.disabled = false;
+      }
+    }
+
+    const LOCAL_DB = [
+      { keys: ['soto semarang', 'soto ayam', 'soto'], name: 'Soto Ayam', cal: 320, prot: 22 },
+      { keys: ['nasi putih', 'nasi'], name: 'Nasi Putih (1 Porsi)', cal: 204, prot: 4 },
+      { keys: ['nasi goreng', 'nasgor'], name: 'Nasi Goreng', cal: 450, prot: 14 },
+      { keys: ['ayam bakar', 'dada ayam'], name: 'Ayam Bakar / Panggang', cal: 240, prot: 32 },
+      { keys: ['ayam goreng'], name: 'Ayam Goreng', cal: 290, prot: 28 },
+      { keys: ['pecel lele', 'lele'], name: 'Pecel Lele', cal: 260, prot: 23 },
+      { keys: ['telur rebus', 'telur'], name: 'Telur Ayam', cal: 78, prot: 6 },
+      { keys: ['tempe', 'mendoan'], name: 'Tempe / Mendoan', cal: 110, prot: 6 },
+      { keys: ['tahu'], name: 'Tahu Goreng/Bacem', cal: 90, prot: 5 },
+      { keys: ['bakso'], name: 'Bakso Sapi', cal: 380, prot: 22 },
+      { keys: ['mie ayam', 'mi ayam'], name: 'Mie Ayam', cal: 420, prot: 18 },
+      { keys: ['bubur ayam'], name: 'Bubur Ayam', cal: 370, prot: 16 },
+      { keys: ['pisang'], name: 'Pisang', cal: 105, prot: 1 },
+      { keys: ['es teh manis', 'teh manis'], name: '🥤 Es Teh Manis', cal: 90, prot: 0 },
+      { keys: ['teh tawar', 'air putih'], name: '🥤 Air Putih / Teh Tawar', cal: 0, prot: 0 },
+      { keys: ['kopi susu', 'es kopi'], name: '🥤 Kopi Susu', cal: 140, prot: 3 },
+      { keys: ['isotonik', 'pocari'], name: '🥤 Minuman Isotonik', cal: 110, prot: 0 },
+      { keys: ['susu', 'whey'], name: '🥤 Susu / Whey Protein', cal: 150, prot: 22 }
+    ];
+
+    function estimateLocally(query) {
+      const parts = query.toLowerCase().split(/[\+,&]| dan | pakai | sama /);
+      let tCal = 0, tProt = 0, names = [];
+      parts.forEach(part => {
+        let clean = part.trim(), mult = 1;
+        if (!clean) return;
+        if (clean.includes('setengah') || clean.includes('1/2')) mult = 0.5;
+        else if (clean.match(/\b2\b/)) mult = 2;
+        let matched = false;
+        for (const item of LOCAL_DB) {
+          if (item.keys.some(k => clean.includes(k))) {
+            tCal += Math.round(item.cal * mult); tProt += Math.round(item.prot * mult);
+            names.push(mult !== 1 ? `${item.name} (${mult}x)` : item.name);
+            matched = true; break;
+          }
+        }
+        if (!matched) { tCal += Math.round(220 * mult); tProt += Math.round(8 * mult); names.push(clean.charAt(0).toUpperCase() + clean.slice(1)); }
+      });
+      return { nama: names.join(' + ') || query, kalori: tCal, protein: tProt };
+    }
+
+    async function analyzeFood() {
+      const q = document.getElementById('foodQuery').value.trim();
+      const targetDate = document.getElementById('logDateInput').value || getLocalToday();
+      if (!q) return;
+      document.getElementById('foodBtn').innerText = '⏳ Menghitung kalori...';
+      let item = null;
+      try {
+        const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': vault.geminiKey },
+          body: JSON.stringify({ contents: [{ parts: [{ text: `Hitung nutrisi makanan/minuman ini: "${q}". Beri JSON murni: {"nama":"Nama","kalori":350,"protein":20}` }] }] })
+        });
+        const json = await res.json();
+        const clean = json.candidates[0].content.parts[0].text.replace(/```json|```/g, '').trim();
+        item = JSON.parse(clean);
+        document.getElementById('engineStatus').innerText = '✨ Dihitung via Gemini AI';
+      } catch (err) {
+        item = estimateLocally(q);
+        document.getElementById('engineStatus').innerText = '⚡ Dihitung via Smart Database';
+      }
+      state.foods.push({ id: Date.now(), date: targetDate, name: item.nama, cal: Number(item.kalori), prot: Number(item.protein) });
+      document.getElementById('foodQuery').value = '';
+      document.getElementById('foodBtn').innerText = '✨ Hitung & Commit Otomatis';
+      saveAndRender(true);
+    }
+
+    function getDayStats(dateStr) {
+      const dayFoods = state.foods.filter(f => f.date === dateStr);
+      const dayWorkouts = state.workouts.filter(w => w.date === dateStr);
+      const intakeCal = dayFoods.reduce((s, f) => s + f.cal, 0);
+      const intakeProt = dayFoods.reduce((s, f) => s + f.prot, 0);
+      const burnCal = dayWorkouts.reduce((s, w) => s + w.cal, 0);
+      const totalMin = dayWorkouts.reduce((s, w) => s + (w.durationMin || 0), 0);
+      const isSat = new Date(dateStr + 'T00:00:00').getDay() === 6;
+      const targetCal = isSat ? 2500 : 2100;
+      return { intakeCal, intakeProt, burnCal, totalMin, targetCal };
+    }
+
+    function renderWeekDropdown() {
+      const totalWeeks = Math.max(8, Math.ceil(state.masterMissions.length / 5) + 2);
+      const select = document.getElementById('weekSelect');
+      let html = '';
+      for (let w = 0; w < totalWeeks; w++) {
+        html += `<option value="${w}" ${w === (state.selectedWeek || 0) ? 'selected' : ''}>Minggu ${w + 1}</option>`;
+      }
+      select.innerHTML = html;
+      document.getElementById('totalPlanCount').innerText = state.masterMissions.length;
+    }
+
+    function saveAndRender(syncGit = false) {
+      localStorage.setItem('dikaGitDbStateV12', JSON.stringify(state));
+      renderWeekDropdown();
+
+      const todayStr = getLocalToday();
+      const selectedDateStr = document.getElementById('logDateInput').value || todayStr;
+      const { map: scheduleMap, totalPassedCount } = buildScheduleMap();
+      const totalMissions = state.masterMissions.length;
+
+      const todayStat = getDayStats(todayStr);
+      const todayMission = scheduleMap[todayStr];
+      const todayPct = todayMission ? (todayMission.percent || 0) : 0;
+
+      document.getElementById('todayIntake').innerText = `${todayStat.intakeCal} kkal`;
+      document.getElementById('todayProt').innerText = `Protein: ${todayStat.intakeProt}/145g`;
+      document.getElementById('todayBurn').innerText = `${todayStat.burnCal} kkal`;
+      document.getElementById('todayWorkoutSummary').innerText = `${todayStat.totalMin} mnt (${todayPct}%)`;
+      document.getElementById('sisaCal').innerText = `Sisa: ${Math.max(0, todayStat.targetCal - todayStat.intakeCal)} kkal`;
+
+      document.getElementById('todayPctText').innerText = `${todayPct}%`;
+      document.getElementById('todayBar').style.width = `${todayPct}%`;
+
+      document.getElementById('missionCount').innerText = `${totalPassedCount} / ${totalMissions}`;
+      document.getElementById('missionBar').style.width = `${Math.min(100, Math.round((totalPassedCount / totalMissions) * 100))}%`;
+
+      const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const weekStartOffset = (state.selectedWeek || 0) * 7;
+      let weekHtml = '';
+
+      for (let i = 0; i < 7; i++) {
+        const dStr = addDays(state.startMonday, weekStartOffset + i);
+        const dObj = new Date(dStr + 'T00:00:00');
+        const dayName = dayNames[dObj.getDay()];
+        const info = scheduleMap[dStr] || { type: 'ACTIVE', title: 'Misi', desc: '', percent: 0 };
+        const st = getDayStats(dStr);
+        const isToday = dStr === todayStr;
+
+        let cardClass = 'day-card';
+        if (isToday) cardClass += ' today';
+        if (info.type === 'REST') cardClass += ' rest';
+        if (info.type === 'PASSED') cardClass += ' passed';
+        if (info.type === 'SKIPPED') cardClass += ' skipped';
+
+        let progBarHtml = '';
+        let statusFooter = '';
+
+        if (info.type === 'ACTIVE' || info.type === 'PASSED') {
+          const isPass = info.type === 'PASSED';
+          const pct = info.percent || 0;
+          const safeTitle = (info.title || '').replace(/'/g, "\\'");
+
+          progBarHtml = `
+            <div class="progress-bar">
+              <div class="progress-fill ${isPass ? '' : 'orange'}" style="width:${pct}%"></div>
+            </div>`;
+
+          statusFooter = `
+            <div class="status-row">
+              <span style="font-size:0.74rem; font-weight:700; color:${isPass ? '#10b981' : '#f59e0b'};">
+                ${info.evalReason}
+              </span>
+              <div style="display:flex; gap:5px;">
+                ${!isPass ? `<button class="btn-bypass" onclick="openBypassModal('${dStr}', '${safeTitle}')">⚡ Bypass</button>` : ''}
+                ${state.manualBypasses[dStr] ? `<button class="btn-undo" onclick="removeManualBypass('${dStr}')">↺ Batal Bypass</button>` : ''}
+                ${!isPass ? `<button class="btn-skip" onclick="toggleSkipDay('${dStr}')">⏭️ Skip</button>` : ''}
+              </div>
+            </div>`;
+        } else if (info.type === 'SKIPPED') {
+          statusFooter = `
+            <div class="status-row">
+              <span style="font-size:0.74rem; font-weight:700; color:#f59e0b;">⏭️ DI-SKIP (Digeser ke hari aktif berikutnya)</span>
+              <button class="btn-undo" onclick="toggleSkipDay('${dStr}')">↺ Batal Skip</button>
+            </div>`;
+        }
+
+        weekHtml += `
+          <div class="${cardClass}">
+            <div class="day-header">
+              <strong>${dayName}, ${dStr} ${isToday ? '🔵 (HARI INI)' : ''}</strong>
+              <span>Target Makan: ${st.targetCal} kkal</span>
+            </div>
+            <div class="mission-title">${info.title}</div>
+            <div class="mission-desc">${info.desc}</div>
+            <div class="daily-cal-strip">
+              <span>🍽️ Makan/Minum: <strong>${st.intakeCal} kkal</strong> (${st.intakeProt}g P)</span>
+              <span>🔥 Olahraga: <strong style="color:#f97316">${st.burnCal} kkal</strong> (${st.totalMin} mnt)</span>
+            </div>
+            ${progBarHtml}
+            ${statusFooter}
+          </div>`;
+      }
+      document.getElementById('weekScheduleList').innerHTML = weekHtml;
+
+      let historyHtml = '';
+      for (let h = 0; h < 14; h++) {
+        const histDate = addDays(todayStr, -h);
+        const hStat = getDayStats(histDate);
+        const hSch = scheduleMap[histDate] || { title: 'Hari Latihan', percent: 0, type: 'ACTIVE' };
+        const hName = dayNames[new Date(histDate + 'T00:00:00').getDay()];
+        const pct = hSch.percent || 0;
+        historyHtml += `
+          <div class="history-card">
+            <div style="display:flex; justify-content:space-between; font-weight:700; color:#38bdf8; margin-bottom:4px;">
+              <span>${hName}, ${histDate}</span>
+              <span style="color:${hSch.type==='PASSED'?'#10b981':'#f59e0b'}">Progres: ${pct}%</span>
+            </div>
+            <div style="font-size:0.76rem; color:#94a3b8; margin-bottom:4px;">${hSch.title}</div>
+            <div class="progress-bar"><div class="progress-fill ${pct>=100?'':'orange'}" style="width:${pct}%"></div></div>
+            <div style="display:flex; justify-content:space-between; font-size:0.78rem; color:#cbd5e1; margin-top:4px;">
+              <span>🍽️ Masuk: <strong>${hStat.intakeCal} kkal</strong> (${hStat.intakeProt}g P)</span>
+              <span>🔥 Keluar: <strong style="color:#f97316">${hStat.burnCal} kkal</strong> (${hStat.totalMin} mnt)</span>
+            </div>
+          </div>`;
+      }
+      document.getElementById('historyList').innerHTML = historyHtml;
+
+      const selFoods = state.foods.filter(f => f.date === selectedDateStr);
+      document.getElementById('foodList').innerHTML = selFoods.slice().reverse().map(f =>
+        `<li>
+          <span>[${f.date}] ${f.name} <span class="badge">${f.prot}g P</span></span>
+          <span style="display:flex; align-items:center; gap:5px;">
+            <strong>${f.cal} kkal</strong>
+            <button class="edit-btn" onclick="openEditFood('${f.id}')">✏️</button>
+            <button class="del-btn" onclick="deleteFood('${f.id}')">✕</button>
+          </span>
+        </li>`
+      ).join('');
+
+      document.getElementById('workoutList').innerHTML = state.workouts.slice().reverse().slice(0, 20).map(w =>
+        `<li>
+          <span>[${w.date}] ${w.typeLabel}</span>
+          <span style="display:flex; align-items:center; gap:5px;">
+            <strong style="color:#f97316">🔥 ${w.cal} kkal</strong>
+            <button class="edit-btn" onclick="openEditWorkout('${w.id}')">✏️</button>
+            <button class="del-btn" onclick="deleteWorkout('${w.id}')">✕</button>
+          </span>
+        </li>`
+      ).join('');
+
+      if (syncGit) {
+        pushToGitHub(false);
+      }
+    }
+
+    saveAndRender(false);
+    syncFromIntervals();
+    pullFromGitHub(false);
+  </script>
+</body>
+</html>
