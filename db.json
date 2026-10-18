@@ -1,16 +1,331 @@
 {
-  "lastUpdated": "2026-10-18T00:00:00.000Z",
-  "startMonday": "2026-10-19",
+  "lastUpdated": "2026-10-18T11:48:50.732Z",
+  "startMonday": "2026-10-12",
   "selectedWeek": 0,
+  "masterMissions": [
+    {
+      "code": "W1-M1",
+      "category": "RIDE",
+      "title": "🚴 Gowes Zone 2 Spin (Mgg 1)",
+      "desc": "Kayuh santai Strattos S7 (Target: 10 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 10,
+      "minMin": 30
+    },
+    {
+      "code": "W1-M2",
+      "category": "RUN",
+      "title": "🏃 Easy Run Pagi (Mgg 1)",
+      "desc": "Lari pagi sepatu running (Target: 3.5 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 3.5,
+      "minMin": 30
+    },
+    {
+      "code": "W1-M3",
+      "category": "STRENGTH",
+      "title": "🏋️‍♂️ Strength Training Gym Kantor (Mgg 1)",
+      "desc": "Latihan beban di Gym Kantor: Squat/Leg Press, Row & Plank (Target: 30 menit).",
+      "minKm": 0,
+      "minMin": 30
+    },
+    {
+      "code": "W1-M4",
+      "category": "RIDE",
+      "title": "⛰️ Hill Climb / Tempo Pendek (Mgg 1)",
+      "desc": "Gowes tanjakan pagi (Target: 8 KM atau 30 menit). Kamis malam meeting -> Jumat Libur!",
+      "minKm": 8,
+      "minMin": 30
+    },
+    {
+      "code": "W1-M5",
+      "category": "RIDE_LONG",
+      "title": "🏆 Long Ride Sabtu: 30 KM (Mgg 1)",
+      "desc": "Jadwal bebas Sabtu! Target 30 KM (80% HR Zone 2). Minggu pagi jualan -> Libur!",
+      "minKm": 26,
+      "minMin": 60
+    },
+    {
+      "code": "W2-M1",
+      "category": "RIDE",
+      "title": "🚴 Gowes Zone 2 Spin (Mgg 2)",
+      "desc": "Kayuh santai Strattos S7 (Target: 10 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 10,
+      "minMin": 30
+    },
+    {
+      "code": "W2-M2",
+      "category": "RUN",
+      "title": "🏃 Easy Run Pagi (Mgg 2)",
+      "desc": "Lari pagi sepatu running (Target: 3.5 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 3.5,
+      "minMin": 30
+    },
+    {
+      "code": "W2-M3",
+      "category": "STRENGTH",
+      "title": "🏋️‍♂️ Strength Training Gym Kantor (Mgg 2)",
+      "desc": "Latihan beban di Gym Kantor: Squat/Leg Press, Row & Plank (Target: 30 menit).",
+      "minKm": 0,
+      "minMin": 30
+    },
+    {
+      "code": "W2-M4",
+      "category": "RIDE",
+      "title": "⛰️ Hill Climb / Tempo Pendek (Mgg 2)",
+      "desc": "Gowes tanjakan pagi (Target: 8 KM atau 30 menit). Kamis malam meeting -> Jumat Libur!",
+      "minKm": 8,
+      "minMin": 30
+    },
+    {
+      "code": "W2-M5",
+      "category": "RIDE_LONG",
+      "title": "🏆 Long Ride Sabtu: 40 KM (Mgg 2)",
+      "desc": "Jadwal bebas Sabtu! Target 40 KM (80% HR Zone 2). Minggu pagi jualan -> Libur!",
+      "minKm": 34,
+      "minMin": 60
+    },
+    {
+      "code": "W3-M1",
+      "category": "RIDE",
+      "title": "🚴 Gowes Zone 2 Spin (Mgg 3)",
+      "desc": "Kayuh santai Strattos S7 (Target: 10 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 10,
+      "minMin": 30
+    },
+    {
+      "code": "W3-M2",
+      "category": "RUN",
+      "title": "🏃 Easy Run Pagi (Mgg 3)",
+      "desc": "Lari pagi sepatu running (Target: 3.5 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 3.5,
+      "minMin": 30
+    },
+    {
+      "code": "W3-M3",
+      "category": "STRENGTH",
+      "title": "🏋️‍♂️ Strength Training Gym Kantor (Mgg 3)",
+      "desc": "Latihan beban di Gym Kantor: Squat/Leg Press, Row & Plank (Target: 30 menit).",
+      "minKm": 0,
+      "minMin": 30
+    },
+    {
+      "code": "W3-M4",
+      "category": "RIDE",
+      "title": "⛰️ Hill Climb / Tempo Pendek (Mgg 3)",
+      "desc": "Gowes tanjakan pagi (Target: 8 KM atau 30 menit). Kamis malam meeting -> Jumat Libur!",
+      "minKm": 8,
+      "minMin": 30
+    },
+    {
+      "code": "W3-M5",
+      "category": "RIDE_LONG",
+      "title": "🏆 Long Ride Sabtu: 50 KM (Mgg 3)",
+      "desc": "Jadwal bebas Sabtu! Target 50 KM (80% HR Zone 2). Minggu pagi jualan -> Libur!",
+      "minKm": 43,
+      "minMin": 60
+    },
+    {
+      "code": "W4-M1",
+      "category": "RIDE",
+      "title": "🚴 Gowes Zone 2 Spin (Mgg 4)",
+      "desc": "Kayuh santai Strattos S7 (Target: 10 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 10,
+      "minMin": 30
+    },
+    {
+      "code": "W4-M2",
+      "category": "RUN",
+      "title": "🏃 Easy Run Pagi (Mgg 4)",
+      "desc": "Lari pagi sepatu running (Target: 3.5 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 3.5,
+      "minMin": 30
+    },
+    {
+      "code": "W4-M3",
+      "category": "STRENGTH",
+      "title": "🏋️‍♂️ Strength Training Gym Kantor (Mgg 4)",
+      "desc": "Latihan beban di Gym Kantor: Squat/Leg Press, Row & Plank (Target: 30 menit).",
+      "minKm": 0,
+      "minMin": 30
+    },
+    {
+      "code": "W4-M4",
+      "category": "RIDE",
+      "title": "⛰️ Hill Climb / Tempo Pendek (Mgg 4)",
+      "desc": "Gowes tanjakan pagi (Target: 8 KM atau 30 menit). Kamis malam meeting -> Jumat Libur!",
+      "minKm": 8,
+      "minMin": 30
+    },
+    {
+      "code": "W4-M5",
+      "category": "RIDE_LONG",
+      "title": "🏆 Long Ride Sabtu: 35 KM (Mgg 4)",
+      "desc": "Jadwal bebas Sabtu! Target 35 KM (80% HR Zone 2). Minggu pagi jualan -> Libur!",
+      "minKm": 30,
+      "minMin": 60
+    },
+    {
+      "code": "W5-M1",
+      "category": "RIDE",
+      "title": "🚴 Gowes Zone 2 Spin (Mgg 5)",
+      "desc": "Kayuh santai Strattos S7 (Target: 10 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 10,
+      "minMin": 30
+    },
+    {
+      "code": "W5-M2",
+      "category": "RUN",
+      "title": "🏃 Easy Run Pagi (Mgg 5)",
+      "desc": "Lari pagi sepatu running (Target: 3.5 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 3.5,
+      "minMin": 30
+    },
+    {
+      "code": "W5-M3",
+      "category": "STRENGTH",
+      "title": "🏋️‍♂️ Strength Training Gym Kantor (Mgg 5)",
+      "desc": "Latihan beban di Gym Kantor: Squat/Leg Press, Row & Plank (Target: 30 menit).",
+      "minKm": 0,
+      "minMin": 30
+    },
+    {
+      "code": "W5-M4",
+      "category": "RIDE",
+      "title": "⛰️ Hill Climb / Tempo Pendek (Mgg 5)",
+      "desc": "Gowes tanjakan pagi (Target: 8 KM atau 30 menit). Kamis malam meeting -> Jumat Libur!",
+      "minKm": 8,
+      "minMin": 30
+    },
+    {
+      "code": "W5-M5",
+      "category": "RIDE_LONG",
+      "title": "🏆 Long Ride Sabtu: 65 KM (Mgg 5)",
+      "desc": "Jadwal bebas Sabtu! Target 65 KM (80% HR Zone 2). Minggu pagi jualan -> Libur!",
+      "minKm": 55,
+      "minMin": 60
+    },
+    {
+      "code": "W6-M1",
+      "category": "RIDE",
+      "title": "🚴 Gowes Zone 2 Spin (Mgg 6)",
+      "desc": "Kayuh santai Strattos S7 (Target: 10 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 10,
+      "minMin": 30
+    },
+    {
+      "code": "W6-M2",
+      "category": "RUN",
+      "title": "🏃 Easy Run Pagi (Mgg 6)",
+      "desc": "Lari pagi sepatu running (Target: 3.5 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 3.5,
+      "minMin": 30
+    },
+    {
+      "code": "W6-M3",
+      "category": "STRENGTH",
+      "title": "🏋️‍♂️ Strength Training Gym Kantor (Mgg 6)",
+      "desc": "Latihan beban di Gym Kantor: Squat/Leg Press, Row & Plank (Target: 30 menit).",
+      "minKm": 0,
+      "minMin": 30
+    },
+    {
+      "code": "W6-M4",
+      "category": "RIDE",
+      "title": "⛰️ Hill Climb / Tempo Pendek (Mgg 6)",
+      "desc": "Gowes tanjakan pagi (Target: 8 KM atau 30 menit). Kamis malam meeting -> Jumat Libur!",
+      "minKm": 8,
+      "minMin": 30
+    },
+    {
+      "code": "W6-M5",
+      "category": "RIDE_LONG",
+      "title": "🏆 Long Ride Sabtu: 75 KM (Mgg 6)",
+      "desc": "Jadwal bebas Sabtu! Target 75 KM (80% HR Zone 2). Minggu pagi jualan -> Libur!",
+      "minKm": 64,
+      "minMin": 60
+    },
+    {
+      "code": "W7-M1",
+      "category": "RIDE",
+      "title": "🚴 Gowes Zone 2 Spin (Mgg 7)",
+      "desc": "Kayuh santai Strattos S7 (Target: 10 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 10,
+      "minMin": 30
+    },
+    {
+      "code": "W7-M2",
+      "category": "RUN",
+      "title": "🏃 Easy Run Pagi (Mgg 7)",
+      "desc": "Lari pagi sepatu running (Target: 3.5 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 3.5,
+      "minMin": 30
+    },
+    {
+      "code": "W7-M3",
+      "category": "STRENGTH",
+      "title": "🏋️‍♂️ Strength Training Gym Kantor (Mgg 7)",
+      "desc": "Latihan beban di Gym Kantor: Squat/Leg Press, Row & Plank (Target: 30 menit).",
+      "minKm": 0,
+      "minMin": 30
+    },
+    {
+      "code": "W7-M4",
+      "category": "RIDE",
+      "title": "⛰️ Hill Climb / Tempo Pendek (Mgg 7)",
+      "desc": "Gowes tanjakan pagi (Target: 8 KM atau 30 menit). Kamis malam meeting -> Jumat Libur!",
+      "minKm": 8,
+      "minMin": 30
+    },
+    {
+      "code": "W7-M5",
+      "category": "RIDE_LONG",
+      "title": "🏆 Long Ride Sabtu: 85 KM (Mgg 7)",
+      "desc": "Jadwal bebas Sabtu! Target 85 KM (80% HR Zone 2). Minggu pagi jualan -> Libur!",
+      "minKm": 72,
+      "minMin": 60
+    },
+    {
+      "code": "W8-M1",
+      "category": "RIDE",
+      "title": "🚴 Gowes Zone 2 Spin (Mgg 8)",
+      "desc": "Kayuh santai Strattos S7 (Target: 10 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 10,
+      "minMin": 30
+    },
+    {
+      "code": "W8-M2",
+      "category": "RUN",
+      "title": "🏃 Easy Run Pagi (Mgg 8)",
+      "desc": "Lari pagi sepatu running (Target: 3.5 KM atau 30 menit). Maks 40 mnt.",
+      "minKm": 3.5,
+      "minMin": 30
+    },
+    {
+      "code": "W8-M3",
+      "category": "STRENGTH",
+      "title": "🏋️‍♂️ Strength Training Gym Kantor (Mgg 8)",
+      "desc": "Latihan beban di Gym Kantor: Squat/Leg Press, Row & Plank (Target: 30 menit).",
+      "minKm": 0,
+      "minMin": 30
+    },
+    {
+      "code": "W8-M4",
+      "category": "RIDE",
+      "title": "⛰️ Hill Climb / Tempo Pendek (Mgg 8)",
+      "desc": "Gowes tanjakan pagi (Target: 8 KM atau 30 menit). Kamis malam meeting -> Jumat Libur!",
+      "minKm": 8,
+      "minMin": 30
+    },
+    {
+      "code": "W8-M5",
+      "category": "RIDE_LONG",
+      "title": "🏆 Long Ride Sabtu: 100 KM (Mgg 8)",
+      "desc": "Jadwal bebas Sabtu! Target 100 KM (80% HR Zone 2). Minggu pagi jualan -> Libur!",
+      "minKm": 85,
+      "minMin": 60
+    }
+  ],
   "skippedDates": {},
   "manualBypasses": {},
   "foods": [],
-  "workouts": [],
-  "masterMissions": [
-    { "code": "W1-M1", "category": "RIDE", "title": "🚴 Gowes Zone 2 Spin (Mgg 1)", "desc": "Kayuh santai Strattos S7 (Target: 10 KM atau 30 menit). Maks 40 mnt.", "minKm": 10, "minMin": 30 },
-    { "code": "W1-M2", "category": "RUN", "title": "🏃 Easy Run Pagi (Mgg 1)", "desc": "Lari pagi sepatu running (Target: 3.5 KM atau 30 menit). Maks 40 mnt.", "minKm": 3.5, "minMin": 30 },
-    { "code": "W1-M3", "category": "STRENGTH", "title": "🏋️‍♂️ Strength Gym Kantor (Mgg 1)", "desc": "Latihan beban di Gym Kantor: Squat/Leg Press, Row & Plank (Target: 30 menit).", "minKm": 0, "minMin": 30 },
-    { "code": "W1-M4", "category": "RIDE", "title": "⛰️ Hill Climb / Tempo Pendek (Mgg 1)", "desc": "Gowes tanjakan pagi (Target: 8 KM atau 30 menit). Kamis malam meeting -> Jumat Libur!", "minKm": 8, "minMin": 30 },
-    { "code": "W1-M5", "category": "RIDE_LONG", "title": "🏆 Long Ride Sabtu: 30 KM (Mgg 1)", "desc": "Jadwal bebas Sabtu! Target 30 KM (80% HR Zone 2). Minggu pagi jualan -> Libur!", "minKm": 26, "minMin": 60 }
-  ]
+  "workouts": []
 }
