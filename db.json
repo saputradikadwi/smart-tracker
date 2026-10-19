@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-19T06:24:03.681Z",
+  "lastUpdated": "2026-10-19T06:27:40.857Z",
   "startMonday": "2026-10-12",
   "selectedWeek": 0,
   "masterMissions": [
@@ -326,6 +326,14 @@
   ],
   "skippedDates": {},
   "manualBypasses": {},
-  "foods": [],
+  "foods": [
+    {
+      "id": 1792391259999,
+      "date": "2026-10-19",
+      "name": "Daging",
+      "cal": 220,
+      "prot": 8
+    }
+  ],
   "workouts": []
 }
