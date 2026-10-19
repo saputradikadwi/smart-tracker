@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-10-19T06:27:40.857Z",
+  "lastUpdated": "2026-10-19T06:27:50.663Z",
   "startMonday": "2026-10-12",
   "selectedWeek": 0,
   "masterMissions": [
@@ -331,6 +331,13 @@
       "id": 1792391259999,
       "date": "2026-10-19",
       "name": "Daging",
+      "cal": 220,
+      "prot": 8
+    },
+    {
+      "id": 1792391269873,
+      "date": "2026-10-19",
+      "name": "Roti sisir",
       "cal": 220,
       "prot": 8
     }
